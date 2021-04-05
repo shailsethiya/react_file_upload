@@ -1,6 +1,6 @@
-import TakeSelfie from "./TakeSelfie/TakeSelfie";
+// import TakeSelfie from "./TakeSelfie/TakeSelfie";
 import DragDrop from "./DragDrop/DragDrop";
-import UploadFile from "./UploadFile/UploadFile";
+// import UploadFile from "./UploadFile/UploadFile";
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 
 
@@ -9,8 +9,6 @@ function App() {
   return (
     <div className="App">
       <DragDrop />
-      <TakeSelfie />
-      <UploadFile />
     </div>
   );
 }
