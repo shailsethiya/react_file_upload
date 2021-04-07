@@ -6,30 +6,35 @@ import TakeSelfie from "../TakeSelfie/TakeSelfie";
 import UploadFile from "../UploadFile/UploadFile"
 
 export default function DragDrop() {
-    const onDrop = useCallback(acceptedFiles => {
-        setfilesData(acceptedFiles)
-        console.log("acceptedFiles", acceptedFiles)
-        localStorage.setItem('fileInfo', JSON.stringify(acceptedFiles));
-    }, [])
+   
     const [files, setfilesData] = useState([]);
-    const {getRootProps, getInputProps} = useDropzone({onDrop});
+    const [fileSizeAlert, setfileSizeAlert] = useState('');
+    const onDrop = useCallback(acceptedFiles => {
+        let filesArr = []
+        // acceptedFiles.length > 0 && acceptedFiles.map((data, i)=>{
+        //     if(data.size > 100000){
+        //         setfileSizeAlert(data.name+ 'file is too large')
+        //     }
+        // })
+        console.log('files', ...files, ...acceptedFiles)
+        setfilesData(current => [...current, ...acceptedFiles]);
+        
+    }, [])
 
-    /*useEffect(() => {
-        return () => {
-            const data =  localStorage.setItem('fileInfo' , JSON.stringify(files));
-            console.log("data===", data)
-        }
-    }, []) */
+    function onClose(data, id){
+        var filtered = files.filter((value, index, arr)=>{ 
+            return index !== id;
+        });
+        setfilesData(filtered)
+    }
 
-   /* useEffect(() => {
-        effect
-        return () => {
-            cleanup
-        }
-    }, [input]) */
+    const {getRootProps, getInputProps, isDragReject, rejectedFiles} = useDropzone({onDrop});
+    // const maxSize = 100000
+    const isFileTooLarge = rejectedFiles && rejectedFiles.length > 0 && rejectedFiles[0].size > 100000
     return(
         <Stack horizontalAlign='center' style={{ height:160, fontSize: 14, fontWeight: 700, width: 500, fontFamily: 'monospace', backgroundColor: '#f1f1f1' , border: `dashed 2px #409adf` }}>
-           <div {...getRootProps()} style={{ width: 500, justifyContent: 'center', alignItems: 'center', marginBottom: 20}} >
+           <div {...getRootProps()} {...isDragReject} {...rejectedFiles} style={{ width: 500, justifyContent: 'center', alignItems: 'center', marginBottom: 20}} >
+                
                 <input {...getInputProps()} />
                 <div style={{ display: 'flex', flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
                     <IconButton iconProps={{ iconName: 'PresenceChickletVideo',
@@ -44,7 +49,7 @@ export default function DragDrop() {
                 <p style={{textAlign: 'center', paddingBottom: 20}}>Drag and Drop or tap/click to chose file from location</p>
             </div>
             <TakeSelfie />
-            <UploadFile files={files} />
+            <UploadFile files={files} onClose={onClose}/>
         </Stack>
     )
 }
